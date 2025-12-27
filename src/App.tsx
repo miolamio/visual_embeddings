@@ -9,6 +9,7 @@ import { ScatterPlot } from './components/ScatterPlot'
 import { PhraseLegend } from './components/PhraseLegend'
 import { SettingsDialog } from './components/SettingsDialog'
 import { InfoBlock } from './components/InfoBlock'
+import { Footer } from './components/Footer'
 import { getEmbedding, checkConnection } from './lib/embeddings'
 import { cosineSimilarity, interpretSimilarity, normalizeSimilarity } from './lib/similarity'
 import { buildSimilarityMatrix } from './lib/matrix'
@@ -218,6 +219,8 @@ function App() {
           <InfoBlock />
         </div>
       </main>
+
+      <Footer />
 
       <SettingsDialog
         open={settingsOpen}
