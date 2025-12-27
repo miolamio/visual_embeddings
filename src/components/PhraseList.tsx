@@ -28,11 +28,10 @@ export function PhraseList({ phrases, selectedIds, onToggleSelection, onDeletePh
         <CardTitle>Фразы для сравнения</CardTitle>
       </CardHeader>
       <CardContent className="space-y-1">
-        {phrases.map((phrase, index) => (
+        {phrases.map((phrase) => (
           <PhraseItem
             key={phrase.id}
             phrase={phrase}
-            index={index}
             isSelected={selectedIds.includes(phrase.id)}
             onToggle={onToggleSelection}
             onDelete={onDeletePhrase}

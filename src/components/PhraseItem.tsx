@@ -2,17 +2,17 @@ import { useState } from "react";
 import { Trash2, Eye, EyeOff } from "lucide-react";
 import { Checkbox } from "./ui/checkbox";
 import { Button } from "./ui/button";
+import { PhraseBadge } from "./PhraseBadge";
 import type { Phrase } from "../types";
 
 interface PhraseItemProps {
   phrase: Phrase;
-  index: number;
   isSelected: boolean;
   onToggle: (id: string) => void;
   onDelete: (id: string) => void;
 }
 
-export function PhraseItem({ phrase, index, isSelected, onToggle, onDelete }: PhraseItemProps) {
+export function PhraseItem({ phrase, isSelected, onToggle, onDelete }: PhraseItemProps) {
   const [showVector, setShowVector] = useState(false);
 
   return (
@@ -22,10 +22,10 @@ export function PhraseItem({ phrase, index, isSelected, onToggle, onDelete }: Ph
         onCheckedChange={() => onToggle(phrase.id)}
         className="mt-1"
       />
+      <PhraseBadge label={phrase.label} size="md" />
       <div className="flex-1 min-w-0">
         <div className="flex items-start justify-between gap-2">
           <div className="flex-1">
-            <span className="text-muted-foreground text-sm mr-2">{index + 1}.</span>
             <span className="text-foreground">{phrase.text}</span>
           </div>
           <div className="flex gap-1">

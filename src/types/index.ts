@@ -1,5 +1,16 @@
+export type PhraseLabel = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' |
+                   'K' | 'L' | 'M' | 'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T' |
+                   'U' | 'V' | 'W' | 'X' | 'Y' | 'Z';
+
+export const LABELS: PhraseLabel[] = [
+  'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
+  'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
+  'U', 'V', 'W', 'X', 'Y', 'Z'
+];
+
 export interface Phrase {
   id: string;
+  label: PhraseLabel;
   text: string;
   embedding: number[];
   createdAt: Date;
@@ -29,4 +40,23 @@ export interface SimilarityResult {
   similarity: number;
   normalizedSimilarity: number;
   interpretation: 'identical' | 'high' | 'medium' | 'low' | 'opposite';
+}
+
+export interface SimilarityMatrix {
+  labels: PhraseLabel[];
+  values: number[][];
+  phrases: Phrase[];
+}
+
+export interface ProjectedPoint {
+  label: PhraseLabel;
+  text: string;
+  x: number;
+  y: number;
+  originalIndex: number;
+}
+
+export interface ScatterData {
+  points: ProjectedPoint[];
+  isComputing: boolean;
 }

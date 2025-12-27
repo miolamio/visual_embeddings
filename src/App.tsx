@@ -1,14 +1,20 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { Toaster, toast } from 'sonner'
 import { Header } from './components/Header'
 import { PhraseInput } from './components/PhraseInput'
 import { PhraseList } from './components/PhraseList'
 import { SimilarityDisplay } from './components/SimilarityDisplay'
+import { SimilarityMatrix } from './components/SimilarityMatrix'
+import { ScatterPlot } from './components/ScatterPlot'
+import { PhraseLegend } from './components/PhraseLegend'
 import { SettingsDialog } from './components/SettingsDialog'
 import { InfoBlock } from './components/InfoBlock'
 import { getEmbedding, checkConnection } from './lib/embeddings'
 import { cosineSimilarity, interpretSimilarity, normalizeSimilarity } from './lib/similarity'
-import type { Phrase, Settings, SimilarityResult } from './types'
+import { buildSimilarityMatrix } from './lib/matrix'
+import { projectToScatter } from './lib/projection'
+import type { Phrase, Settings, SimilarityResult, ScatterData } from './types'
+import { LABELS } from './types'
 
 const DEFAULT_SETTINGS: Settings = {
   provider: 'ollama',
@@ -24,6 +30,23 @@ function App() {
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS)
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [similarityResult, setSimilarityResult] = useState<SimilarityResult | null>(null)
+  const [scatterData, setScatterData] = useState<ScatterData>({ points: [], isComputing: false })
+
+  const matrix = useMemo(() => {
+    if (phrases.length === 0) return { labels: [], values: [], phrases: [] }
+    return buildSimilarityMatrix(phrases)
+  }, [phrases])
+
+  useEffect(() => {
+    if (phrases.length >= 3) {
+      setScatterData({ points: [], isComputing: true })
+      projectToScatter(phrases)
+        .then(points => setScatterData({ points, isComputing: false }))
+        .catch(() => setScatterData({ points: [], isComputing: false }))
+    } else {
+      setScatterData({ points: [], isComputing: false })
+    }
+  }, [phrases])
 
   useEffect(() => {
     const saved = localStorage.getItem('embedding-explorer-settings')
@@ -62,11 +85,18 @@ function App() {
   }, [selectedIds, phrases])
 
   const handleAddPhrase = async (text: string) => {
+    if (phrases.length >= 26) {
+      toast.error('Достигнут максимум фраз (A-Z)')
+      return
+    }
+    
     setIsLoading(true)
     try {
       const embedding = await getEmbedding(text, settings)
+      const label = LABELS[phrases.length]
       const newPhrase: Phrase = {
         id: crypto.randomUUID(),
+        label,
         text,
         embedding,
         createdAt: new Date(),
@@ -74,7 +104,7 @@ function App() {
         model: settings.model,
       }
       setPhrases(prev => [...prev, newPhrase])
-      toast.success('Фраза добавлена')
+      toast.success(`Фраза ${label} добавлена`)
     } catch (error) {
       console.error('Error getting embedding:', error)
       if (error instanceof Error) {
@@ -128,22 +158,62 @@ function App() {
     }
   }
 
+  const handleMatrixCellClick = (rowIndex: number, colIndex: number) => {
+    if (rowIndex === colIndex) return
+    const phraseA = phrases[rowIndex]
+    const phraseB = phrases[colIndex]
+    setSelectedIds([phraseA.id, phraseB.id])
+  }
+
+  const handleScatterPointClick = (point: any) => {
+    const phrase = phrases.find(p => p.label === point.label)
+    if (phrase) {
+      setSelectedIds(prev => {
+        if (prev.includes(phrase.id)) {
+          return prev.filter(id => id !== phrase.id)
+        }
+        if (prev.length >= 2) {
+          return [...prev.slice(1), phrase.id]
+        }
+        return [...prev, phrase.id]
+      })
+    }
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <Header onOpenSettings={() => setSettingsOpen(true)} />
       
-      <main className="container mx-auto px-4 py-8 max-w-4xl">
+      <main className="container mx-auto px-4 py-8 max-w-6xl">
         <div className="space-y-6">
           <PhraseInput onAddPhrase={handleAddPhrase} isLoading={isLoading} />
           
-          <SimilarityDisplay result={similarityResult} />
-          
-          <PhraseList
-            phrases={phrases}
-            selectedIds={selectedIds}
-            onToggleSelection={handleToggleSelection}
-            onDeletePhrase={handleDeletePhrase}
-          />
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2 space-y-6">
+              <SimilarityDisplay result={similarityResult} />
+              
+              <SimilarityMatrix 
+                matrix={matrix} 
+                onCellClick={handleMatrixCellClick}
+              />
+              
+              <ScatterPlot 
+                points={scatterData.points}
+                onPointClick={handleScatterPointClick}
+              />
+            </div>
+            
+            <div className="space-y-6">
+              <PhraseList
+                phrases={phrases}
+                selectedIds={selectedIds}
+                onToggleSelection={handleToggleSelection}
+                onDeletePhrase={handleDeletePhrase}
+              />
+              
+              <PhraseLegend phrases={phrases} />
+            </div>
+          </div>
 
           <InfoBlock />
         </div>
