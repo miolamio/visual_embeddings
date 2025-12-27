@@ -80,12 +80,25 @@ export function SimilarityMatrix({ matrix, onCellClick }: SimilarityMatrixProps)
         
         <div className="mt-4 flex items-center justify-center gap-2 text-xs">
           <span className="text-muted-foreground">Низкое</span>
-          <div className="flex gap-1">
-            <div className="w-6 h-4 rounded" style={{ backgroundColor: '#3b82f6' }}></div>
-            <div className="w-6 h-4 rounded" style={{ backgroundColor: '#8b5cf6' }}></div>
-            <div className="w-6 h-4 rounded" style={{ backgroundColor: '#f97316' }}></div>
-            <div className="w-6 h-4 rounded" style={{ backgroundColor: '#ef4444' }}></div>
-            <div className="w-6 h-4 rounded" style={{ backgroundColor: '#dc2626' }}></div>
+          <div className="flex gap-0.5">
+            <div className="w-4 h-4 rounded-sm" style={{ backgroundColor: '#1e3a8a' }} />
+            <div className="w-4 h-4 rounded-sm" style={{ backgroundColor: '#1d4ed8' }} />
+            <div className="w-4 h-4 rounded-sm" style={{ backgroundColor: '#2563eb' }} />
+            <div className="w-4 h-4 rounded-sm" style={{ backgroundColor: '#3b82f6' }} />
+            <div className="w-4 h-4 rounded-sm" style={{ backgroundColor: '#4f46e5' }} />
+            <div className="w-4 h-4 rounded-sm" style={{ backgroundColor: '#6366f1' }} />
+            <div className="w-4 h-4 rounded-sm" style={{ backgroundColor: '#7c3aed' }} />
+            <div className="w-4 h-4 rounded-sm" style={{ backgroundColor: '#8b5cf6' }} />
+            <div className="w-4 h-4 rounded-sm" style={{ backgroundColor: '#9333ea' }} />
+            <div className="w-4 h-4 rounded-sm" style={{ backgroundColor: '#a855f7' }} />
+            <div className="w-4 h-4 rounded-sm" style={{ backgroundColor: '#fbbf24' }} />
+            <div className="w-4 h-4 rounded-sm" style={{ backgroundColor: '#fb923c' }} />
+            <div className="w-4 h-4 rounded-sm" style={{ backgroundColor: '#f97316' }} />
+            <div className="w-4 h-4 rounded-sm" style={{ backgroundColor: '#f87171' }} />
+            <div className="w-4 h-4 rounded-sm" style={{ backgroundColor: '#ef4444' }} />
+            <div className="w-4 h-4 rounded-sm" style={{ backgroundColor: '#dc2626' }} />
+            <div className="w-4 h-4 rounded-sm" style={{ backgroundColor: '#b91c1c' }} />
+            <div className="w-4 h-4 rounded-sm" style={{ backgroundColor: '#991b1b' }} />
           </div>
           <span className="text-muted-foreground">Высокое</span>
         </div>
